@@ -10,6 +10,7 @@ const client = new Client ({
         IntentsBitField.Flags.GuildMessages,
         IntentsBitField.Flags.MessageContent,
         IntentsBitField.Flags.GuildPresences,
+        IntentsBitField.Flags.GuildVoiceStates,
     ]
 });
 
@@ -32,28 +33,40 @@ client.on('messageCreate', async (message) => { //async function allows for 'awa
     if (message.content.toLowerCase() === '!checksiege') {
         const activityToCheck = 'Rainbow Six Siege';  //can change activity to any desired game
         let count = 0;
+        let voiceCount = 0;
+
+        const guildVoices = await message.guild.members.cache.filter(member => member.voice.channel);
+
+        console.log(guildVoices);
+        // guildVoices.forEach(member => {
+            
+        // });
+        
         
         const members = await message.guild.members.fetch();
-        members.forEach(member => {
-            // console.log(`${member.presence} ${member.presence.activities}`);
-            if (member.presence && member.presence.activities) { //user only counted if has presence and has an activity
-                member.presence.activities.forEach(activity => {
-                    console.log(`${member.user.username}: ${activity.name}`); //for debugging
-                    if (activity.name.indexOf(activityToCheck) > -1) {
-                        console.log(activity.name.indexOf(activityToCheck) > -1)
-                        count++;
-                    }
-                });
-            }
-        });
+        
+        // members.forEach(member => {
+        //     // console.log(`${member.presence} ${member.presence.activities}`);
+        //     if (member.presence && member.presence.activities) { //user only counted if has presence and has an activity
+        //         member.presence.activities.forEach(activity => {
+        //             console.log(`${member.user.username}: ${activity.name}`); //for debugging
+        //             if (activity.name.indexOf(activityToCheck) > -1) {
+        //                 console.log(`${activity.name} | ${activity.name.indexOf(activityToCheck)}`);
+        //                 console.log(activity.name.indexOf(activityToCheck) > -1)
+        //                 count++;
+        //                 console.log(count);
+        //             }
+        //         });
+        //     }
+        // });
 
-        if (count < 1) {
+        if (voiceCount < 1) {
             message.channel.send(`Nobody is on Siege right now... 😒`);
         }
-        else if (count < 4) {
+        else if (voiceCount < 4) {
             message.channel.send(`Siege Squad could use some more right now, only ${count} on! 👀`);
         }
-        else if (count === 4) {
+        else if (voiceCount === 4) {
             message.channel.send(`Act Fast! Only one more spot on Siege! 🏃‍♂️`);
         }
         else {
