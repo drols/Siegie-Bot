@@ -10,6 +10,7 @@ const client = new Client ({
         IntentsBitField.Flags.GuildMessages,
         IntentsBitField.Flags.MessageContent,
         IntentsBitField.Flags.GuildPresences,
+        IntentsBitField.Flags.GuildVoiceStates,
     ]
 });
 
@@ -26,10 +27,10 @@ client.on('ready', (c) => {
 
 client.on('messageCreate', async (message) => { //async function allows for 'await' otherwise will reply multiple times
     if (message.content.toLowerCase() === '!help') {
-        message.channel.send(`Siegie is online. 😊 Type '!checkSiege' to check the Squad!`);
+        message.channel.send(`Siegie is online. 😊 Type '!siege' or '!siegevoice' to check the Squad!`);
     }
     
-    if (message.content.toLowerCase() === '!checksiege') {
+    if (message.content.toLowerCase() === '!siege') {
         const activityToCheck = 'Rainbow Six Siege';  //can change activity to any desired game
         let count = 0;
         
@@ -60,6 +61,37 @@ client.on('messageCreate', async (message) => { //async function allows for 'awa
             message.channel.send(`Siege Squad is full... 😞 better luck next time.`);
         }
     }
+
+
+    if (message.content.toLowerCase() === '!siegevoice') {
+        const activityToCheck = 'Rainbow Six Siege';  //can change activity to any desired game
+        let voiceCount = 0;
+
+        const guildVoices = await message.guild.members.cache.filter(member => member.voice.channel);
+
+        console.log(guildVoices);
+        // guildVoices.forEach(member => {
+            
+        // });
+        
+        
+        const members = await message.guild.members.fetch();
+        
+
+        if (voiceCount < 1) {
+            message.channel.send(`Nobody is on Siege right now... 😒`);
+        }
+        else if (voiceCount < 4) {
+            message.channel.send(`Siege Squad could use some more right now, only ${count} on! 👀`);
+        }
+        else if (voiceCount === 4) {
+            message.channel.send(`Act Fast! Only one more spot on Siege! 🏃‍♂️`);
+        }
+        else {
+            message.channel.send(`Siege Squad is full... 😞 better luck next time.`);
+        }
+    }
+
 })
 
 client.login(process.env.TOKEN); //uses token from .env to remain private
